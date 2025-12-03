@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>College-to-Career Prep Survey</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --panel: #ffffff;
+      --muted: #5f5f5f;
+      --text: #1a1a1a;
+      --accent: #bf5700; /* burnt orange */
+      --border: #d6d6d6;
+      --chip: #f5f5f5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin:0; padding:24px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .wrap { max-width: 900px; margin: 0 auto; }
+    .card { background: #ffffff; border: 1px solid var(--border); border-radius: 18px; padding: 22px; }
+    header h1 { margin: 0 0 6px; font-size: 28px; color: var(--accent); }
+    header p { margin:0; color: var(--muted); }
+    fieldset { border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin: 0 0 14px; }
+    legend { color: var(--accent); font-weight: 700; padding: 0 6px; }
+    .q { margin-top: 8px; }
+    .q .prompt { font-weight: 600; margin-bottom: 8px; }
+    .opt { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; padding: 8px 10px; border-radius: 10px; border: 1px solid transparent; }
+    .opt:hover { background: #fff4ec; border-color: var(--accent); }
+    .controls { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+    button, .btn-link { border: 1px solid var(--border); background: #ffffff; color: var(--text); padding: 10px 14px; border-radius: 12px; cursor: pointer; font-weight: 700; }
+    button.primary { border-color: var(--accent); background: var(--accent); color: white; }
+    .results { margin-top: 18px; }
+    .group { margin-top: 18px; }
+    .group h4 { margin: 0 0 10px; color: var(--accent); }
+    .link { display:block; padding:12px 14px; border:1px solid var(--border); border-radius:14px; margin-bottom:10px; text-decoration:none; color:var(--accent); font-weight:600; }
+    .link:hover { border-color: var(--accent); background:#fff4ec; }
+    .hr { height: 1px; background: var(--border); border:0; margin: 18px 0; }
+    .muted { color: var(--muted); }
+    .pill { display:inline-block; border:1px solid var(--border); border-radius:999px; padding:3px 8px; font-size:11px; margin-left:6px; background:#fff4ec; color:var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header style="margin:0 0 18px 0">
+      <h1>College-to-Career Prep Survey</h1>
+      <p>Answer a few questions and get a personalized list of resources.</p>
+    </header>
+
+    <main>
+      <section class="card">
+        <form id="surveyForm"></form>
+        <div class="controls">
+          <button class="primary" id="submitBtn" form="surveyForm">See My Personalized Links</button>
+          <button type="button" id="resetBtn">Reset</button>
+          <button type="button" id="copyBtn">Copy Links</button>
+          <button type="button" id="downloadBtn">Download CSV</button>
+        </div>
+        <div class="results" id="results"></div>
+      </section>
+    </main>
+  </div>
+
+<script>
+// ================= CONFIG =================
+const config = {
+  questions: [
+    {
+      id: 'year',
+      type: 'single',
+      legend: 'Academic Year',
+      text: 'What year are you?',
+      options: [
+        { value: 'freshman', label: 'Freshman' },
+        { value: 'sophomore', label: 'Sophomore' },
+        { value: 'junior', label: 'Junior' },
+        { value: 'senior', label: 'Senior' }
+      ]
+    },
+    {
+      id: 'pathway',
+      type: 'single',
+      legend: 'Career Goals',
+      text: 'After graduation, which path interests you most?',
+      options: [
+        { value: 'health', label: 'Health Professions' },
+        { value: 'law', label: 'Law' },
+        { value: 'grad', label: 'Graduate School' },
+        { value: 'government', label: 'Government / Public Policy' },
+        { value: 'education', label: 'Education / Teaching' },
+        { value: 'research', label: 'Research / Data / Analytics' },
+        { value: 'business', label: 'Business / Industry' },
+        { value: 'unsure', label: "I’m not sure yet" }
+      ]
+    },
+    {
+      id: 'materials',
+      type: 'matrix',
+      legend: 'Professional Materials & Readiness',
+      text: 'How confident are you with the following?',
+      rows: [
+        { id: 'resume_ok', label: 'Resume' },
+        { id: 'cover_ok', label: 'Cover Letter' },
+        { id: 'interview_ok', label: 'Interviewing' },
+        { id: 'network_ok', label: 'Networking' },
+        { id: 'branding_ok', label: 'Professional Branding' }
+      ],
+      cols: [
+        { value: 'confident', label: 'Confident' },
+        { value: 'not_confident', label: 'Needs Improvement' }
+      ]
+    },
+    {
+      id: 'research_interest',
+      type: 'single',
+      legend: 'Research & Academic Engagement',
+      text: 'Are you interested in research, teaching, or academic pathways?',
+      options: [
+        { value: 'research', label: 'Yes — I want to get involved in research' },
+        { value: 'grad_teach', label: 'Yes — I’m considering graduate school or teaching' },
+        { value: 'no', label: 'Not at this time' }
+      ]
+    },
+    {
+      id: 'skills',
+      type: 'multi',
+      legend: 'Self-Development & Skill Building',
+      text: 'Which areas would you like to strengthen? (Select all that apply)',
+      options: [
+        { value: 'strengths', label: 'Discovering my strengths' },
+        { value: 'marketing_degree', label: 'Marketing my sociology degree' },
+        { value: 'transferable_skills', label: 'Understanding transferable skills' },
+        { value: 'success', label: 'Managing my time and academic success' },
+        { value: 'general_resources', label: 'Finding general resources to support me' }
+      ]
+    },
+    {
+      id: 'planning',
+      type: 'single',
+      legend: 'Exploration & Planning',
+      text: 'Which type of guidance would help most right now?',
+      options: [
+        { value: 'options', label: 'Understanding my options' },
+        { value: 'experience', label: 'Building experience (internships, networking)' },
+        { value: 'programs', label: 'Applying to future programs' }
+      ]
+    }
+  ],
+
+  links: {
+    year: {
+      freshman: { label: 'First Year', url: 'https://utexas.instructure.com/courses/1365574/pages/first-year' },
+      sophomore: { label: 'Second Year', url: 'https://utexas.instructure.com/courses/1365574/pages/second-year' },
+      junior: { label: 'Third Year', url: 'https://utexas.instructure.com/courses/1365574/pages/third-year' },
+      senior: { label: 'Fourth Year', url: 'https://utexas.instructure.com/courses/1365574/pages/fourth-year' }
+    },
+    pathways: {
+      health: [
+        { label:'Exploring Health Professions', url:'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-health-professions-2' }
+      ],
+      law: [
+        { label:'Preparing for Law School', url:'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-law-school' }
+      ],
+      grad:[
+        { label:'Preparing for Graduate School', url:'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-graduate-school'}
+      ],
+      research:[
+        { label:'How to Get Involved in Research', url:'https://utexas.instructure.com/courses/1365574/pages/how-to-get-involved-in-research' }
+      ],
+      government:[],
+      education:[],
+      business:[],
+      unsure:[]
+    },
+    materials:{
+      resume:{ label:'Resume', url:'https://utexas.instructure.com/courses/1365574/pages/resume' },
+      cover:{ label:'Cover Letters', url:'https://utexas.instructure.com/courses/1365574/pages/cover-letters' },
+      interview:[
+        { label:'Interview Preparation', url:'https://utexas.instructure.com/courses/1365574/pages/interview-preparation-and-what-to-expect-day-of' }
+      ],
+      networking_extra:[],
+      branding:[]
+    },
+    selfdev:{
+      strengths:{ label:'Strengths', url:'' },
+      marketing_degree:{ label:'Marketing Your Sociology Degree', url:'' },
+      transferable_skills:{ label:'Transferable Skills', url:'' },
+      success:{ label:'Strategies for Success', url:'' },
+      general_resources:{ label:'General Resources', url:'' }
+    },
+    exploration:{
+      options:[],
+      experience:[
+        { label:'Networking & Informational Interviews', url:'https://utexas.instructure.com/courses/1365574/pages/networking-and-informational-interviews' }
+      ],
+      programs:[
+        { label:'Preparing for Graduate School', url:'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-graduate-school' }
+      ]
+    }
+  }
+};
+// ================= END CONFIG =================
+
+
+// ----------- Form Rendering --------------
+const formEl = document.getElementById('surveyForm');
+const resultsEl = document.getElementById('results');
+
+function renderForm(){
+  formEl.innerHTML = '';
+  config.questions.forEach(q => {
+    const fs = document.createElement('fieldset');
+    const lg = document.createElement('legend');
+    lg.textContent = q.legend;
+    fs.appendChild(lg);
+
+    const div = document.createElement('div');
+    div.className = 'q';
+
+    const label = document.createElement('label');
+    label.className = 'prompt';
+    label.textContent = q.text;
+    div.appendChild(label);
+
+    if(q.type === 'single' || q.type === 'multi'){
+      q.options.forEach((opt, idx)=>{
+        const id = `${q.id}_${idx}`;
+        const row = document.createElement('label');
+        row.className = 'opt';
+        const input = document.createElement('input');
+        input.type = q.type === 'multi' ? 'checkbox':'radio';
+        input.name = q.id;
+        input.value = opt.value;
+        input.id = id;
+        const span = document.createElement('span');
+        span.textContent = opt.label;
+        row.appendChild(input);
+        row.appendChild(span);
+        div.appendChild(row);
+      });
+    } else if(q.type === 'matrix'){
+      const table = document.createElement('table');
+      table.style.width='100%';
+      table.style.borderCollapse='collapse';
+
+      const thead = document.createElement('thead');
+      const trh = document.createElement('tr');
+      trh.appendChild(document.createElement('th'));
+      q.cols.forEach(c=>{
+        const th=document.createElement('th');
+        th.style.padding='6px';
+        th.textContent=c.label;
+        trh.appendChild(th);
+      });
+      thead.appendChild(trh);
+      table.appendChild(thead);
+
+      const tbody=document.createElement('tbody');
+      q.rows.forEach((r,ridx)=>{
+        const tr=document.createElement('tr');
+        const tdLabel=document.createElement('td');
+        tdLabel.textContent=r.label;
+        tr.appendChild(tdLabel);
+
+        q.cols.forEach((c,cidx)=>{
+          const td=document.createElement('td');
+          const id=`${q.id}_${r.id}_${cidx}`;
+          const input=document.createElement('input');
+          input.type='radio';
+          input.name=r.id;
+          input.value=c.value;
+          input.id=id;
+          td.appendChild(input);
+          tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      div.appendChild(table);
+    }
+
+    fs.appendChild(div);
+    formEl.appendChild(fs);
+  });
+}
+renderForm();
+
+
+// ----------- Collect Answers --------------
+function getAnswers(){
+  const data={};
+  config.questions.forEach(q=>{
+    if(q.type === 'single'){
+      const el = document.querySelector(`[name="${q.id}"]:checked`);
+      data[q.id] = el ? el.value : null;
+    } else if(q.type === 'multi'){
+      const els=[...document.querySelectorAll(`[name="${q.id}"]`)].filter(x=>x.checked);
+      data[q.id]=els.map(e=>e.value);
+    } else if(q.type === 'matrix'){
+      data[q.id]={};
+      q.rows.forEach(r=>{
+        const el=document.querySelector(`[name="${r.id}"]:checked`);
+        data[q.id][r.id]=el? el.value:null;
+      });
+    }
+  });
+  return data;
+}
+
+
+// ----------- Build Recommendations --------------
+function buildRecommendations(answers){
+  const groups={};
+
+  if(answers.year && config.links.year[answers.year]?.url){
+    groups['Academic Year']=[config.links.year[answers.year]];
+  }
+
+  if(answers.pathway){
+    const arr=config.links.pathways[answers.pathway] || [];
+    const filtered=arr.filter(x=>x.url);
+    if(filtered.length){
+      groups['Career Goals']=filtered;
+    }
+  }
+
+  const m=answers.materials||{};
+  if(m.resume_ok==='not_confident' && config.links.materials.resume.url){
+    groups['Professional Materials'] ??=[];
+    groups['Professional Materials'].push(config.links.materials.resume);
+  }
+  if(m.cover_ok==='not_confident'){
+    const item=config.links.materials.cover;
+    if(item.url){
+      groups['Professional Materials'] ??=[];
+      groups['Professional Materials'].push(item);
+    }
+  }
+  if(m.interview_ok==='not_confident'){
+    const items=config.links.materials.interview.filter(x=>x.url);
+    if(items.length){
+      groups['Professional Materials'] ??=[];
+      groups['Professional Materials'].push(...items);
+    }
+  }
+
+  if(answers.research_interest==='research'){
+    const items=config.links.pathways.research.filter(x=>x.url);
+    if(items.length){
+      groups['Research & Academic Engagement']=items;
+    }
+  } else if(answers.research_interest==='grad_teach'){
+    const item=config.links.pathways.grad?.[0];
+    if(item?.url){
+      groups['Research & Academic Engagement']=[item];
+    }
+  }
+
+  if(Array.isArray(answers.skills)){
+    answers.skills.forEach(s=>{
+      const item=config.links.selfdev[s];
+      if(item && item.url){
+        groups['Self-Development'] ??=[];
+        groups['Self-Development'].push(item);
+      }
+    });
+  }
+
+  if(answers.planning){
+    const arr=config.links.exploration[answers.planning] || [];
+    const filtered=arr.filter(x=>x.url);
+    if(filtered.length){
+      groups['Exploration & Planning']=filtered;
+    }
+  }
+
+  return groups;
+}
+
+
+// ----------- Render Results --------------
+function renderResults(groups, answers){
+  resultsEl.innerHTML='';
+
+  const picked=document.createElement('p');
+  picked.className='muted';
+  picked.innerHTML = `<strong>Your selections:</strong> Year <span class="pill">${answers.year||'—'}</span> • Pathway <span class="pill">${answers.pathway||'—'}</span>`;
+  resultsEl.appendChild(picked);
+
+  if(Object.keys(groups).length===0){
+    const p=document.createElement('p');
+    p.className='muted';
+    p.textContent='No recommendations yet.';
+    resultsEl.appendChild(p);
+    return;
+  }
+
+  for(const [g,items] of Object.entries(groups)){
+    const sec=document.createElement('div');
+    sec.className='group';
+    const h=document.createElement('h4');
+    h.textContent=g;
+    sec.appendChild(h);
+
+    items.forEach(it=>{
+      const a=document.createElement('a');
+      a.className='link';
+      a.href=it.url;
+      a.target='_blank';
+      a.rel='noopener noreferrer';
+      a.textContent=it.label;
+      sec.appendChild(a);
+    });
+
+    resultsEl.appendChild(sec);
+  }
+}
+
+
+// ----------- Buttons --------------
+document.getElementById('submitBtn').addEventListener('click', (e)=>{
+  e.preventDefault();
+  const ans=getAnswers();
+  const groups=buildRecommendations(ans);
+  renderResults(groups, ans);
+});
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  formEl.reset();
+  resultsEl.innerHTML='';
+});
+
+document.getElementById('copyBtn').addEventListener('click', ()=>{
+  const ans=getAnswers();
+  const groups=buildRecommendations(ans);
+  if(Object.keys(groups).length===0){ alert('No links to copy'); return; }
+  const lines=[];
+  for(const [g,items] of Object.entries(groups)){
+    items.forEach(it=>lines.push(`${g}: ${it.label} — ${it.url}`));
+  }
+  navigator.clipboard.writeText(lines.join("\n")).then(()=>alert('Copied!'));
+});
+
+document.getElementById('downloadBtn').addEventListener('click', ()=>{
+  const ans=getAnswers();
+  const groups=buildRecommendations(ans);
+  if(Object.keys(groups).length===0){ alert('No links'); return; }
+
+  const rows=[['Group','Label','URL']];
+  for(const [g,items] of Object.entries(groups)){
+    items.forEach(it=>rows.push([g,it.label,it.url]));
+  }
+  const csv=rows.map(r=>r.map(x=>`"${x}"`).join(',')).join("\n");
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='links.csv'; a.click();
+  URL.revokeObjectURL(url);
+});
+</script>
+</body>
+</html>
