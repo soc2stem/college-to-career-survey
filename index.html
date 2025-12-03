@@ -48,7 +48,7 @@
   <div class="wrap">
     <header style="margin:0 0 18px 0">
       <h1>College-to-Career Prep Survey</h1>
-      <p>Answer a few questions and get a personalized list of resources.</p>
+      <p>Answer a few questions and get a personalized set of Canvas resources.</p>
     </header>
 
     <main>
@@ -75,130 +75,316 @@ const config = {
       legend: 'Academic Year',
       text: 'What year are you?',
       options: [
-        { value: 'freshman', label: 'Freshman' },
-        { value: 'sophomore', label: 'Sophomore' },
-        { value: 'junior', label: 'Junior' },
-        { value: 'senior', label: 'Senior' }
+        { value: 'freshman', label: 'First year / Freshman' },
+        { value: 'sophomore', label: 'Second year / Sophomore' },
+        { value: 'junior', label: 'Third year / Junior' },
+        { value: 'senior', label: 'Fourth year / Senior' }
       ]
     },
     {
       id: 'pathway',
       type: 'single',
-      legend: 'Career Goals',
-      text: 'After graduation, which path interests you most?',
+      legend: 'Career Direction After Graduation',
+      text: 'Which path best matches your current interests after graduation?',
       options: [
-        { value: 'health', label: 'Health Professions' },
-        { value: 'law', label: 'Law' },
-        { value: 'grad', label: 'Graduate School' },
-        { value: 'government', label: 'Government / Public Policy' },
-        { value: 'education', label: 'Education / Teaching' },
-        { value: 'research', label: 'Research / Data / Analytics' },
-        { value: 'business', label: 'Business / Industry' },
-        { value: 'unsure', label: "I’m not sure yet" }
+        { value: 'health', label: 'Health professions (pre-health)' },
+        { value: 'law', label: 'Law school / legal careers' },
+        { value: 'grad', label: 'Graduate school (MA/PhD or related programs)' },
+        { value: 'research', label: 'Research, data, or analytics' },
+        { value: 'business', label: 'Business / industry / private sector' },
+        { value: 'education', label: 'Education / teaching / academic support' },
+        { value: 'government', label: 'Government / public policy / nonprofit' },
+        { value: 'unsure', label: "I'm still exploring my options" }
       ]
     },
     {
       id: 'materials',
       type: 'matrix',
       legend: 'Professional Materials & Readiness',
-      text: 'How confident are you with the following?',
+      text: 'For each item, how confident do you feel right now?',
       rows: [
         { id: 'resume_ok', label: 'Resume' },
-        { id: 'cover_ok', label: 'Cover Letter' },
+        { id: 'cover_ok', label: 'Cover letter' },
         { id: 'interview_ok', label: 'Interviewing' },
-        { id: 'network_ok', label: 'Networking' },
-        { id: 'branding_ok', label: 'Professional Branding' }
+        { id: 'network_ok', label: 'Networking & career events' },
+        { id: 'branding_ok', label: 'Social media / personal branding' },
+        { id: 'jobsearch_ok', label: 'Internship & job search strategies' }
       ],
       cols: [
         { value: 'confident', label: 'Confident' },
-        { value: 'not_confident', label: 'Needs Improvement' }
+        { value: 'not_confident', label: 'Needs improvement' }
       ]
     },
     {
       id: 'research_interest',
       type: 'single',
       legend: 'Research & Academic Engagement',
-      text: 'Are you interested in research, teaching, or academic pathways?',
+      text: 'How interested are you in research, academic work, or further study?',
       options: [
-        { value: 'research', label: 'Yes — I want to get involved in research' },
-        { value: 'grad_teach', label: 'Yes — I’m considering graduate school or teaching' },
-        { value: 'no', label: 'Not at this time' }
+        { value: 'research', label: 'I want to get involved in research' },
+        { value: 'grad_teach', label: 'I’m considering graduate school or teaching' },
+        { value: 'no', label: 'Not focused on research or grad school right now' }
       ]
     },
     {
       id: 'skills',
       type: 'multi',
-      legend: 'Self-Development & Skill Building',
+      legend: 'Skills & Self-Development',
       text: 'Which areas would you like to strengthen? (Select all that apply)',
       options: [
-        { value: 'strengths', label: 'Discovering my strengths' },
+        { value: 'strengths', label: 'Understanding my strengths' },
         { value: 'marketing_degree', label: 'Marketing my sociology degree' },
-        { value: 'transferable_skills', label: 'Understanding transferable skills' },
-        { value: 'success', label: 'Managing my time and academic success' },
-        { value: 'general_resources', label: 'Finding general resources to support me' }
+        { value: 'transferable_skills', label: 'Identifying my transferable skills' },
+        { value: 'success', label: 'Academic skills and strategies for success' },
+        { value: 'general_resources', label: 'General college and career resources' },
+        { value: 'social_sciences_stem', label: 'Connecting social sciences with STEM' }
       ]
     },
     {
       id: 'planning',
       type: 'single',
       legend: 'Exploration & Planning',
-      text: 'Which type of guidance would help most right now?',
+      text: 'What type of guidance would help you most right now?',
       options: [
-        { value: 'options', label: 'Understanding my options' },
-        { value: 'experience', label: 'Building experience (internships, networking)' },
-        { value: 'programs', label: 'Applying to future programs' }
+        { value: 'options', label: 'Exploring options and understanding possibilities' },
+        { value: 'experience', label: 'Building experience (research, internships, networking, career fair)' },
+        { value: 'programs', label: 'Planning and preparing for specific programs (grad/health/law)' }
       ]
     }
   ],
 
   links: {
+    // Academic year specific pages
     year: {
       freshman: { label: 'First Year', url: 'https://utexas.instructure.com/courses/1365574/pages/first-year' },
       sophomore: { label: 'Second Year', url: 'https://utexas.instructure.com/courses/1365574/pages/second-year' },
       junior: { label: 'Third Year', url: 'https://utexas.instructure.com/courses/1365574/pages/third-year' },
       senior: { label: 'Fourth Year', url: 'https://utexas.instructure.com/courses/1365574/pages/fourth-year' }
     },
+
+    // Core general planning resources
+    core: {
+      career_exploration: {
+        label: 'Career Exploration',
+        url: 'https://utexas.instructure.com/courses/1365574/pages/career-exploration'
+      },
+      game_plan: {
+        label: 'Game Plan',
+        url: 'https://utexas.instructure.com/courses/1365574/pages/game-plan'
+      },
+      general_resources: {
+        label: 'General Resources',
+        url: 'https://utexas.instructure.com/courses/1365574/pages/general-resources'
+      },
+      strategies_for_success: {
+        label: 'Strategies for Success',
+        url: 'http://utexas.instructure.com/courses/1365574/pages/strategies-for-success'
+      }
+    },
+
+    // Pathway-based links (after graduation interests)
     pathways: {
       health: [
-        { label:'Exploring Health Professions', url:'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-health-professions-2' }
+        {
+          label: 'Exploring and Preparing for Health Professions',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-health-professions-2'
+        }
       ],
       law: [
-        { label:'Preparing for Law School', url:'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-law-school' }
+        {
+          label: 'Exploring and Preparing for Law School',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-law-school'
+        }
       ],
-      grad:[
-        { label:'Preparing for Graduate School', url:'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-graduate-school'}
+      grad: [
+        {
+          label: 'Exploring and Preparing for Graduate School',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-graduate-school'
+        }
       ],
-      research:[
-        { label:'How to Get Involved in Research', url:'https://utexas.instructure.com/courses/1365574/pages/how-to-get-involved-in-research' }
+      research: [
+        {
+          label: 'How to Get Involved in Research',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/how-to-get-involved-in-research'
+        },
+        {
+          label: 'What is Research?',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/what-is-research'
+        },
+        {
+          label: 'What Do I Get from Research?',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/what-do-i-get-from-research'
+        },
+        {
+          label: 'Skills from Sociology in Research',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/skills-from-sociology-in-research'
+        }
       ],
-      government:[],
-      education:[],
-      business:[],
-      unsure:[]
+      business: [
+        {
+          label: 'Marketing Your Sociology Degree',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/marketing-your-sociology-degree'
+        },
+        {
+          label: 'Social Sciences and STEM',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/social-sciences-and-stem'
+        },
+        {
+          label: 'Transferable Skills',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/transferable-skills-2'
+        }
+      ],
+      education: [
+        {
+          label: 'Exploring and Preparing for Graduate School',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-graduate-school'
+        },
+        {
+          label: 'Skills from Sociology in Research',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/skills-from-sociology-in-research'
+        }
+      ],
+      government: [
+        {
+          label: 'Career Exploration',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/career-exploration'
+        },
+        {
+          label: 'Social Sciences and STEM',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/social-sciences-and-stem'
+        },
+        {
+          label: 'Transferable Skills',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/transferable-skills-2'
+        }
+      ],
+      unsure: [
+        {
+          label: 'Career Exploration',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/career-exploration'
+        },
+        {
+          label: 'Game Plan',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/game-plan'
+        },
+        {
+          label: 'General Resources',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/general-resources'
+        },
+        {
+          label: 'Transferable Skills',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/transferable-skills-2'
+        }
+      ]
     },
-    materials:{
-      resume:{ label:'Resume', url:'https://utexas.instructure.com/courses/1365574/pages/resume' },
-      cover:{ label:'Cover Letters', url:'https://utexas.instructure.com/courses/1365574/pages/cover-letters' },
-      interview:[
-        { label:'Interview Preparation', url:'https://utexas.instructure.com/courses/1365574/pages/interview-preparation-and-what-to-expect-day-of' }
+
+    // Professional materials & career tools
+    materials: {
+      resume: {
+        label: 'Resume',
+        url: 'https://utexas.instructure.com/courses/1365574/pages/resume'
+      },
+      cover: {
+        label: 'Cover Letters',
+        url: 'https://utexas.instructure.com/courses/1365574/pages/cover-letters'
+      },
+      interview: [
+        {
+          label: 'Interview Preparation and What to Expect',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/interview-preparation-and-what-to-expect-day-of'
+        }
       ],
-      networking_extra:[],
-      branding:[]
-    },
-    selfdev:{
-      strengths:{ label:'Strengths', url:'' },
-      marketing_degree:{ label:'Marketing Your Sociology Degree', url:'' },
-      transferable_skills:{ label:'Transferable Skills', url:'' },
-      success:{ label:'Strategies for Success', url:'' },
-      general_resources:{ label:'General Resources', url:'' }
-    },
-    exploration:{
-      options:[],
-      experience:[
-        { label:'Networking & Informational Interviews', url:'https://utexas.instructure.com/courses/1365574/pages/networking-and-informational-interviews' }
+      networking: [
+        {
+          label: 'Networking and Informational Interviews',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/networking-and-informational-interviews'
+        },
+        {
+          label: 'Career Fair',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/career-fair'
+        }
       ],
-      programs:[
-        { label:'Preparing for Graduate School', url:'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-graduate-school' }
+      branding: [
+        {
+          label: 'Social Media and Personal Branding',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/social-media-and-personal-branding'
+        }
+      ],
+      jobsearch: [
+        {
+          label: 'Internship/Job Search Strategies',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/internship-slash-job-search-strategies'
+        }
+      ]
+    },
+
+    // Self-development & skills
+    selfdev: {
+      strengths: {
+        label: 'Strengths',
+        url: 'https://utexas.instructure.com/courses/1365574/pages/strengths'
+      },
+      marketing_degree: {
+        label: 'Marketing Your Sociology Degree',
+        url: 'https://utexas.instructure.com/courses/1365574/pages/marketing-your-sociology-degree'
+      },
+      transferable_skills: {
+        label: 'Transferable Skills',
+        url: 'https://utexas.instructure.com/courses/1365574/pages/transferable-skills-2'
+      },
+      success: {
+        label: 'Strategies for Success',
+        url: 'http://utexas.instructure.com/courses/1365574/pages/strategies-for-success'
+      },
+      general_resources: {
+        label: 'General Resources',
+        url: 'https://utexas.instructure.com/courses/1365574/pages/general-resources'
+      },
+      social_sciences_stem: {
+        label: 'Social Sciences and STEM',
+        url: 'https://utexas.instructure.com/courses/1365574/pages/social-sciences-and-stem'
+      }
+    },
+
+    // Exploration & planning – what type of help they want
+    exploration: {
+      options: [
+        {
+          label: 'Career Exploration',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/career-exploration'
+        },
+        {
+          label: 'Game Plan',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/game-plan'
+        }
+      ],
+      experience: [
+        {
+          label: 'Networking and Informational Interviews',
+          url: 'https://utexas.intructure.com/courses/1365574/pages/networking-and-informational-interviews'
+        },
+        {
+          label: 'Career Fair',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/career-fair'
+        },
+        {
+          label: 'Internship/Job Search Strategies',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/internship-slash-job-search-strategies'
+        }
+      ],
+      programs: [
+        {
+          label: 'Exploring and Preparing for Graduate School',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-graduate-school'
+        },
+        {
+          label: 'Exploring and Preparing for Health Professions',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-health-professions-2'
+        },
+        {
+          label: 'Exploring and Preparing for Law School',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-law-school'
+        }
       ]
     }
   }
@@ -317,22 +503,36 @@ function getAnswers(){
 function buildRecommendations(answers){
   const groups={};
 
+  // Academic year
   if(answers.year && config.links.year[answers.year]?.url){
     groups['Academic Year']=[config.links.year[answers.year]];
   }
 
+  // Core planning – always helpful
+  groups['Getting Started'] = [
+    config.links.core.career_exploration,
+    config.links.core.game_plan,
+    config.links.core.general_resources,
+    config.links.core.strategies_for_success
+  ];
+
+  // Career pathway
   if(answers.pathway){
     const arr=config.links.pathways[answers.pathway] || [];
     const filtered=arr.filter(x=>x.url);
     if(filtered.length){
-      groups['Career Goals']=filtered;
+      groups['Career Direction'] = filtered;
     }
   }
 
+  // Professional materials
   const m=answers.materials||{};
-  if(m.resume_ok==='not_confident' && config.links.materials.resume.url){
-    groups['Professional Materials'] ??=[];
-    groups['Professional Materials'].push(config.links.materials.resume);
+  if(m.resume_ok==='not_confident'){
+    const item=config.links.materials.resume;
+    if(item.url){
+      groups['Professional Materials'] ??=[];
+      groups['Professional Materials'].push(item);
+    }
   }
   if(m.cover_ok==='not_confident'){
     const item=config.links.materials.cover;
@@ -348,29 +548,56 @@ function buildRecommendations(answers){
       groups['Professional Materials'].push(...items);
     }
   }
-
-  if(answers.research_interest==='research'){
-    const items=config.links.pathways.research.filter(x=>x.url);
+  if(m.network_ok==='not_confident'){
+    const items=config.links.materials.networking.filter(x=>x.url);
     if(items.length){
-      groups['Research & Academic Engagement']=items;
+      groups['Professional Materials'] ??=[];
+      groups['Professional Materials'].push(...items);
     }
-  } else if(answers.research_interest==='grad_teach'){
-    const item=config.links.pathways.grad?.[0];
-    if(item?.url){
-      groups['Research & Academic Engagement']=[item];
+  }
+  if(m.branding_ok==='not_confident'){
+    const items=config.links.materials.branding.filter(x=>x.url);
+    if(items.length){
+      groups['Professional Materials'] ??=[];
+      groups['Professional Materials'].push(...items);
+    }
+  }
+  if(m.jobsearch_ok==='not_confident'){
+    const items=config.links.materials.jobsearch.filter(x=>x.url);
+    if(items.length){
+      groups['Professional Materials'] ??=[];
+      groups['Professional Materials'].push(...items);
     }
   }
 
+  // Research & academic engagement
+  if(answers.research_interest==='research'){
+    const items=config.links.pathways.research.filter(x=>x.url);
+    if(items.length){
+      groups['Research & Academic Engagement'] = items;
+    }
+  } else if(answers.research_interest==='grad_teach'){
+    const items=[
+      ...config.links.pathways.grad,
+      ...config.links.pathways.research
+    ].filter(x=>x.url);
+    if(items.length){
+      groups['Research & Academic Engagement'] = items;
+    }
+  }
+
+  // Skills & self-development
   if(Array.isArray(answers.skills)){
     answers.skills.forEach(s=>{
       const item=config.links.selfdev[s];
       if(item && item.url){
-        groups['Self-Development'] ??=[];
-        groups['Self-Development'].push(item);
+        groups['Skills & Self-Development'] ??=[];
+        groups['Skills & Self-Development'].push(item);
       }
     });
   }
 
+  // Exploration & planning
   if(answers.planning){
     const arr=config.links.exploration[answers.planning] || [];
     const filtered=arr.filter(x=>x.url);
