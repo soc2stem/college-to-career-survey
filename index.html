@@ -91,9 +91,6 @@ const config = {
         { value: 'law', label: 'Law school / legal careers' },
         { value: 'grad', label: 'Graduate school (MA/PhD or related programs)' },
         { value: 'research', label: 'Research, data, or analytics' },
-        { value: 'business', label: 'Business / industry / private sector' },
-        { value: 'education', label: 'Education / teaching / academic support' },
-        { value: 'government', label: 'Government / public policy / nonprofit' },
         { value: 'unsure', label: "I'm still exploring my options" }
       ]
     },
@@ -107,7 +104,6 @@ const config = {
         { id: 'cover_ok', label: 'Cover letter' },
         { id: 'interview_ok', label: 'Interviewing' },
         { id: 'network_ok', label: 'Networking & career events' },
-        { id: 'branding_ok', label: 'Social media / personal branding' },
         { id: 'jobsearch_ok', label: 'Internship & job search strategies' }
       ],
       cols: [
@@ -220,44 +216,6 @@ const config = {
           url: 'https://utexas.instructure.com/courses/1365574/pages/skills-from-sociology-in-research'
         }
       ],
-      business: [
-        {
-          label: 'Marketing Your Sociology Degree',
-          url: 'https://utexas.instructure.com/courses/1365574/pages/marketing-your-sociology-degree'
-        },
-        {
-          label: 'Social Sciences and STEM',
-          url: 'https://utexas.instructure.com/courses/1365574/pages/social-sciences-and-stem'
-        },
-        {
-          label: 'Transferable Skills',
-          url: 'https://utexas.instructure.com/courses/1365574/pages/transferable-skills-2'
-        }
-      ],
-      education: [
-        {
-          label: 'Exploring and Preparing for Graduate School',
-          url: 'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-graduate-school'
-        },
-        {
-          label: 'Skills from Sociology in Research',
-          url: 'https://utexas.instructure.com/courses/1365574/pages/skills-from-sociology-in-research'
-        }
-      ],
-      government: [
-        {
-          label: 'Career Exploration',
-          url: 'https://utexas.instructure.com/courses/1365574/pages/career-exploration'
-        },
-        {
-          label: 'Social Sciences and STEM',
-          url: 'https://utexas.instructure.com/courses/1365574/pages/social-sciences-and-stem'
-        },
-        {
-          label: 'Transferable Skills',
-          url: 'https://utexas.instructure.com/courses/1365574/pages/transferable-skills-2'
-        }
-      ],
       unsure: [
         {
           label: 'Career Exploration',
@@ -302,12 +260,6 @@ const config = {
         {
           label: 'Career Fair',
           url: 'https://utexas.instructure.com/courses/1365574/pages/career-fair'
-        }
-      ],
-      branding: [
-        {
-          label: 'Social Media and Personal Branding',
-          url: 'https://utexas.instructure.com/courses/1365574/pages/social-media-and-personal-branding'
         }
       ],
       jobsearch: [
@@ -361,7 +313,7 @@ const config = {
       experience: [
         {
           label: 'Networking and Informational Interviews',
-          url: 'https://utexas.intructure.com/courses/1365574/pages/networking-and-informational-interviews'
+          url: 'https://utexas.instructure.com/courses/1365574/pages/networking-and-informational-interviews'
         },
         {
           label: 'Career Fair',
@@ -550,13 +502,6 @@ function buildRecommendations(answers){
   }
   if(m.network_ok==='not_confident'){
     const items=config.links.materials.networking.filter(x=>x.url);
-    if(items.length){
-      groups['Professional Materials'] ??=[];
-      groups['Professional Materials'].push(...items);
-    }
-  }
-  if(m.branding_ok==='not_confident'){
-    const items=config.links.materials.branding.filter(x=>x.url);
     if(items.length){
       groups['Professional Materials'] ??=[];
       groups['Professional Materials'].push(...items);
