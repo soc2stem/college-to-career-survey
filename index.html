@@ -10,7 +10,7 @@
       --panel: #ffffff;
       --muted: #5f5f5f;
       --text: #1a1a1a;
-      --accent: #bf5700; 
+      --accent: #bf5700; /* burnt orange */
       --border: #d6d6d6;
       --chip: #f5f5f5;
     }
@@ -23,17 +23,127 @@
     }
     .wrap { max-width: 900px; margin: 0 auto; }
     .card { background: #ffffff; border: 1px solid var(--border); border-radius: 18px; padding: 22px; }
+
     header h1 { margin: 0 0 6px; font-size: 28px; color: var(--accent); }
     header p { margin:0; color: var(--muted); }
+
+    /* Progress bar */
+    .progress-wrap {
+      margin: 0 0 16px 0;
+    }
+    .progress-label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: #f1f1f1;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: var(--accent);
+      transition: width 0.2s ease-out;
+    }
+
     fieldset { border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin: 0 0 14px; }
     legend { color: var(--accent); font-weight: 700; padding: 0 6px; }
     .q { margin-top: 8px; }
-    .q .prompt { font-weight: 600; margin-bottom: 8px; }
-    .opt { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; padding: 8px 10px; border-radius: 10px; border: 1px solid transparent; }
+    .q .prompt {
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    /* Tooltip "why we ask this" */
+    .help-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--accent);
+      background: #fffaf4;
+      cursor: help;
+    }
+
+    .opt {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+    }
     .opt:hover { background: #fff4ec; border-color: var(--accent); }
-    .controls { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
-    button, .btn-link { border: 1px solid var(--border); background: #ffffff; color: var(--text); padding: 10px 14px; border-radius: 12px; cursor: pointer; font-weight: 700; }
-    button.primary { border-color: var(--accent); background: var(--accent); color: white; }
+
+    .controls {
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:16px;
+    }
+    .controls button {
+      flex: 1 1 160px;
+    }
+    button, .btn-link {
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    button.primary {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: white;
+    }
+
+    .summary { margin-top: 18px; }
+    .summary-card {
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px;
+      background:#fafafa;
+    }
+    .summary h3 {
+      margin:0 0 10px;
+      font-size:18px;
+      color:var(--accent);
+    }
+    .summary-group {
+      margin-bottom:10px;
+      font-size:14px;
+    }
+    .summary-group strong {
+      display:block;
+      margin-bottom:2px;
+    }
+    .summary-footer {
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:12px;
+    }
+
     .results { margin-top: 18px; }
     .group { margin-top: 18px; }
     .group h4 { margin: 0 0 10px; color: var(--accent); }
@@ -53,13 +163,26 @@
 
     <main>
       <section class="card">
+        <!-- Progress bar -->
+        <div class="progress-wrap">
+          <div class="progress-label">
+            <span id="progressText">0 of 6 questions answered</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+
         <form id="surveyForm"></form>
+
         <div class="controls">
-          <button class="primary" id="submitBtn" form="surveyForm">See My Personalized Links</button>
+          <button class="primary" id="submitBtn" type="button">Review My Responses</button>
           <button type="button" id="resetBtn">Reset</button>
           <button type="button" id="copyBtn">Copy Links</button>
           <button type="button" id="downloadBtn">Download CSV</button>
         </div>
+
+        <div class="summary" id="summary"></div>
         <div class="results" id="results"></div>
       </section>
     </main>
@@ -74,11 +197,12 @@ const config = {
       type: 'single',
       legend: 'Academic Year',
       text: 'What year are you?',
+      help: 'We use this to recommend resources that match where you are in your degree.',
       options: [
         { value: 'freshman', label: 'First year / Freshman' },
         { value: 'sophomore', label: 'Second year / Sophomore' },
         { value: 'junior', label: 'Third year / Junior' },
-        { value: 'senior',  label: 'Fourth year / Senior' }
+        { value: 'senior', label: 'Fourth year / Senior' }
       ]
     },
     {
@@ -86,6 +210,7 @@ const config = {
       type: 'single',
       legend: 'Career Direction After Graduation',
       text: 'Which path best matches your current interests after graduation?',
+      help: 'This helps us prioritize links that fit your current plans or exploration stage.',
       options: [
         { value: 'health', label: 'Health professions (pre-health)' },
         { value: 'law', label: 'Law school / legal careers' },
@@ -99,6 +224,7 @@ const config = {
       type: 'matrix',
       legend: 'Professional Materials & Readiness',
       text: 'For each item, how confident do you feel right now?',
+      help: 'Your responses here let us point you to focused tools for resumes, interviewing, and more.',
       rows: [
         { id: 'resume_ok', label: 'Resume' },
         { id: 'cover_ok', label: 'Cover letter' },
@@ -116,6 +242,7 @@ const config = {
       type: 'single',
       legend: 'Research & Academic Engagement',
       text: 'How interested are you in research, academic work, or further study?',
+      help: 'We use this to recommend research and graduate school resources if they’re relevant to you.',
       options: [
         { value: 'research', label: 'I want to get involved in research' },
         { value: 'grad_teach', label: 'I’m considering graduate school or teaching' },
@@ -127,6 +254,7 @@ const config = {
       type: 'multi',
       legend: 'Skills & Self-Development',
       text: 'Which areas would you like to strengthen? (Select all that apply)',
+      help: 'Your choices here guide us to skills and self-development modules that fit your goals.',
       options: [
         { value: 'strengths', label: 'Understanding my strengths' },
         { value: 'marketing_degree', label: 'Marketing my sociology degree' },
@@ -141,6 +269,7 @@ const config = {
       type: 'single',
       legend: 'Exploration & Planning',
       text: 'What type of guidance would help you most right now?',
+      help: 'This tells us whether to lean more toward exploration, experience building, or specific programs.',
       options: [
         { value: 'options', label: 'Exploring options and understanding possibilities' },
         { value: 'experience', label: 'Building experience (research, internships, networking, career fair)' },
@@ -150,82 +279,193 @@ const config = {
   ],
 
   links: {
+    // Academic year specific pages
     year: {
       freshman: { label: 'First Year', url: 'https://utexas.instructure.com/courses/1365574/pages/first-year' },
-      sophomore:{ label: 'Second Year',url: 'https://utexas.instructure.com/courses/1365574/pages/second-year' },
-      junior:   { label: 'Third Year', url: 'https://utexas.instructure.com/courses/1365574/pages/third-year' },
-      senior:   { label: 'Fourth Year',url: 'https://utexas.instructure.com/courses/1365574/pages/fourth-year' }
+      sophomore: { label: 'Second Year', url: 'https://utexas.instructure.com/courses/1365574/pages/second-year' },
+      junior: { label: 'Third Year', url: 'https://utexas.instructure.com/courses/1365574/pages/third-year' },
+      senior: { label: 'Fourth Year', url: 'https://utexas.instructure.com/courses/1365574/pages/fourth-year' }
     },
 
+    // Core general planning resources
     core: {
-      career_exploration:{label:'Career Exploration',url:'https://utexas.instructure.com/courses/1365574/pages/career-exploration'},
-      game_plan:{label:'Game Plan',url:'https://utexas.instructure.com/courses/1365574/pages/game-plan'},
-      general_resources:{label:'General Resources',url:'https://utexas.instructure.com/courses/1365574/pages/general-resources'},
-      strategies_for_success:{label:'Strategies for Success',url:'http://utexas.instructure.com/courses/1365574/pages/strategies-for-success'}
+      career_exploration: {
+        label: 'Career Exploration',
+        url: 'https://utexas.instructure.com/courses/1365574/pages/career-exploration'
+      },
+      game_plan: {
+        label: 'Game Plan',
+        url: 'https://utexas.instructure.com/courses/1365574/pages/game-plan'
+      },
+      general_resources: {
+        label: 'General Resources',
+        url: 'https://utexas.instructure.com/courses/1365574/pages/general-resources'
+      },
+      strategies_for_success: {
+        label: 'Strategies for Success',
+        url: 'http://utexas.instructure.com/courses/1365574/pages/strategies-for-success'
+      }
     },
 
+    // Pathway-based links (after graduation interests)
     pathways: {
-      health:[
-        { label:'Exploring and Preparing for Health Professions',url:'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-health-professions-2' }
+      health: [
+        {
+          label: 'Exploring and Preparing for Health Professions',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-health-professions-2'
+        }
       ],
-      law:[
-        { label:'Exploring and Preparing for Law School',url:'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-law-school' }
+      law: [
+        {
+          label: 'Exploring and Preparing for Law School',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-law-school'
+        }
       ],
-      grad:[
-        { label:'Exploring and Preparing for Graduate School',url:'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-graduate-school' }
+      grad: [
+        {
+          label: 'Exploring and Preparing for Graduate School',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-graduate-school'
+        }
       ],
-      research:[
-        { label:'How to Get Involved in Research',url:'https://utexas.instructure.com/courses/1365574/pages/how-to-get-involved-in-research'},
-        { label:'What is Research?',url:'https://utexas.instructure.com/courses/1365574/pages/what-is-research'},
-        { label:'What Do I Get from Research?',url:'https://utexas.instructure.com/courses/1365574/pages/what-do-i-get-from-research'},
-        { label:'Skills from Sociology in Research',url:'https://utexas.instructure.com/courses/1365574/pages/skills-from-sociology-in-research'}
+      research: [
+        {
+          label: 'How to Get Involved in Research',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/how-to-get-involved-in-research'
+        },
+        {
+          label: 'What is Research?',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/what-is-research'
+        },
+        {
+          label: 'What Do I Get from Research?',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/what-do-i-get-from-research'
+        },
+        {
+          label: 'Skills from Sociology in Research',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/skills-from-sociology-in-research'
+        }
       ],
-      unsure:[
-        { label:'Career Exploration',url:'https://utexas.instructure.com/courses/1365574/pages/career-exploration'},
-        { label:'Game Plan',url:'https://utexas.instructure.com/courses/1365574/pages/game-plan'},
-        { label:'General Resources',url:'https://utexas.instructure.com/courses/1365574/pages/general-resources'},
-        { label:'Transferable Skills',url:'https://utexas.instructure.com/courses/1365574/pages/transferable-skills-2'}
+      unsure: [
+        {
+          label: 'Career Exploration',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/career-exploration'
+        },
+        {
+          label: 'Game Plan',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/game-plan'
+        },
+        {
+          label: 'General Resources',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/general-resources'
+        },
+        {
+          label: 'Transferable Skills',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/transferable-skills-2'
+        }
       ]
     },
 
+    // Professional materials & career tools
     materials: {
-      resume:{label:'Resume',url:'https://utexas.instructure.com/courses/1365574/pages/resume'},
-      cover:{label:'Cover Letters',url:'https://utexas.instructure.com/courses/1365574/pages/cover-letters'},
-      interview:[
-        {label:'Interview Preparation and What to Expect',url:'https://utexas.instructure.com/courses/1365574/pages/interview-preparation-and-what-to-expect-day-of'}
+      resume: {
+        label: 'Resume',
+        url: 'https://utexas.instructure.com/courses/1365574/pages/resume'
+      },
+      cover: {
+        label: 'Cover Letters',
+        url: 'https://utexas.instructure.com/courses/1365574/pages/cover-letters'
+      },
+      interview: [
+        {
+          label: 'Interview Preparation and What to Expect',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/interview-preparation-and-what-to-expect-day-of'
+        }
       ],
-      networking:[
-        {label:'Networking and Informational Interviews',url:'https://utexas.instructure.com/courses/1365574/pages/networking-and-informational-interviews'},
-        {label:'Career Fair',url:'https://utexas.instructure.com/courses/1365574/pages/career-fair'}
+      networking: [
+        {
+          label: 'Networking and Informational Interviews',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/networking-and-informational-interviews'
+        },
+        {
+          label: 'Career Fair',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/career-fair'
+        }
       ],
-      jobsearch:[
-        {label:'Internship/Job Search Strategies',url:'https://utexas.instructure.com/courses/1365574/pages/internship-slash-job-search-strategies'}
+      jobsearch: [
+        {
+          label: 'Internship/Job Search Strategies',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/internship-slash-job-search-strategies'
+        }
       ]
     },
 
+    // Self-development & skills
     selfdev: {
-      strengths:{label:'Strengths',url:'https://utexas.instructure.com/courses/1365574/pages/strengths'},
-      marketing_degree:{label:'Marketing Your Sociology Degree',url:'https://utexas.instructure.com/courses/1365574/pages/marketing-your-sociology-degree'},
-      transferable_skills:{label:'Transferable Skills',url:'https://utexas.instructure.com/courses/1365574/pages/transferable-skills-2'},
-      success:{label:'Strategies for Success',url:'http://utexas.instructure.com/courses/1365574/pages/strategies-for-success'},
-      general_resources:{label:'General Resources',url:'https://utexas.instructure.com/courses/1365574/pages/general-resources'},
-      social_sciences_stem:{label:'Social Sciences and STEM',url:'https://utexas.instructure.com/courses/1365574/pages/social-sciences-and-stem'}
+      strengths: {
+        label: 'Strengths',
+        url: 'https://utexas.instructure.com/courses/1365574/pages/strengths'
+      },
+      marketing_degree: {
+        label: 'Marketing Your Sociology Degree',
+        url: 'https://utexas.instructure.com/courses/1365574/pages/marketing-your-sociology-degree'
+      },
+      transferable_skills: {
+        label: 'Transferable Skills',
+        url: 'https://utexas.instructure.com/courses/1365574/pages/transferable-skills-2'
+      },
+      success: {
+        label: 'Strategies for Success',
+        url: 'http://utexas.instructure.com/courses/1365574/pages/strategies-for-success'
+      },
+      general_resources: {
+        label: 'General Resources',
+        url: 'https://utexas.instructure.com/courses/1365574/pages/general-resources'
+      },
+      social_sciences_stem: {
+        label: 'Social Sciences and STEM',
+        url: 'https://utexas.instructure.com/courses/1365574/pages/social-sciences-and-stem'
+      }
     },
 
+    // Exploration & planning – what type of help they want
     exploration: {
-      options:[
-        {label:'Career Exploration',url:'https://utexas.instructure.com/courses/1365574/pages/career-exploration'},
-        {label:'Game Plan',url:'https://utexas.instructure.com/courses/1365574/pages/game-plan'}
+      options: [
+        {
+          label: 'Career Exploration',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/career-exploration'
+        },
+        {
+          label: 'Game Plan',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/game-plan'
+        }
       ],
-      experience:[
-        {label:'Networking and Informational Interviews',url:'https://utexas.instructure.com/courses/1365574/pages/networking-and-informational-interviews'},
-        {label:'Career Fair',url:'https://utexas.instructure.com/courses/1365574/pages/career-fair'},
-        {label:'Internship/Job Search Strategies',url:'https://utexas.instructure.com/courses/1365574/pages/internship-slash-job-search-strategies'}
+      experience: [
+        {
+          label: 'Networking and Informational Interviews',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/networking-and-informational-interviews'
+        },
+        {
+          label: 'Career Fair',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/career-fair'
+        },
+        {
+          label: 'Internship/Job Search Strategies',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/internship-slash-job-search-strategies'
+        }
       ],
-      programs:[
-        {label:'Exploring and Preparing for Graduate School',url:'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-graduate-school'},
-        {label:'Exploring and Preparing for Health Professions',url:'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-health-professions-2'},
-        {label:'Exploring and Preparing for Law School',url:'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-law-school'}
+      programs: [
+        {
+          label: 'Exploring and Preparing for Graduate School',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-graduate-school'
+        },
+        {
+          label: 'Exploring and Preparing for Health Professions',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-health-professions-2'
+        },
+        {
+          label: 'Exploring and Preparing for Law School',
+          url: 'https://utexas.instructure.com/courses/1365574/pages/exploring-and-preparing-for-law-school'
+        }
       ]
     }
   }
@@ -233,10 +473,15 @@ const config = {
 // ================= END CONFIG =================
 
 
-// ----------- Form Rendering --------------
+// ----------- DOM References --------------
 const formEl = document.getElementById('surveyForm');
 const resultsEl = document.getElementById('results');
+const summaryEl = document.getElementById('summary');
+const progressFill = document.getElementById('progressFill');
+const progressText = document.getElementById('progressText');
 
+
+// ----------- Form Rendering --------------
 function renderForm(){
   formEl.innerHTML = '';
   config.questions.forEach(q => {
@@ -251,6 +496,16 @@ function renderForm(){
     const label = document.createElement('label');
     label.className = 'prompt';
     label.textContent = q.text;
+
+    // Add "why we ask this" tooltip if present
+    if (q.help) {
+      const help = document.createElement('span');
+      help.className = 'help-icon';
+      help.textContent = '?';
+      help.title = q.help;
+      label.appendChild(help);
+    }
+
     div.appendChild(label);
 
     if(q.type === 'single' || q.type === 'multi'){
@@ -287,7 +542,7 @@ function renderForm(){
       table.appendChild(thead);
 
       const tbody=document.createElement('tbody');
-      q.rows.forEach((r,ridx)=>{
+      q.rows.forEach((r)=>{
         const tr=document.createElement('tr');
         const tdLabel=document.createElement('td');
         tdLabel.textContent=r.label;
@@ -338,6 +593,38 @@ function getAnswers(){
   });
   return data;
 }
+
+
+// ----------- Progress Tracking --------------
+function computeProgress(answers){
+  const total = config.questions.length; // 6
+  let completed = 0;
+
+  config.questions.forEach(q => {
+    if (q.type === 'single') {
+      if (answers[q.id]) completed++;
+    } else if (q.type === 'multi') {
+      if (Array.isArray(answers[q.id]) && answers[q.id].length > 0) completed++;
+    } else if (q.type === 'matrix') {
+      const val = answers[q.id] || {};
+      const allAnswered = q.rows.every(r => val[r.id]);
+      if (allAnswered) completed++;
+    }
+  });
+
+  return { completed, total };
+}
+
+function updateProgress(){
+  const ans = getAnswers();
+  const { completed, total } = computeProgress(ans);
+  const pct = total > 0 ? (completed / total) * 100 : 0;
+  progressFill.style.width = `${pct}%`;
+  progressText.textContent = `${completed} of ${total} questions answered`;
+}
+
+// Update progress on any change
+formEl.addEventListener('change', updateProgress);
 
 
 // ----------- Build Recommendations --------------
@@ -408,13 +695,18 @@ function buildRecommendations(answers){
 
   // Research & academic engagement
   if(answers.research_interest==='research'){
-    groups['Research & Academic Engagement'] =
-      config.links.pathways.research.filter(x=>x.url);
+    const items=config.links.pathways.research.filter(x=>x.url);
+    if(items.length){
+      groups['Research & Academic Engagement'] = items;
+    }
   } else if(answers.research_interest==='grad_teach'){
-    groups['Research & Academic Engagement'] = [
+    const items=[
       ...config.links.pathways.grad,
       ...config.links.pathways.research
     ].filter(x=>x.url);
+    if(items.length){
+      groups['Research & Academic Engagement'] = items;
+    }
   }
 
   // Skills & self-development
@@ -441,6 +733,103 @@ function buildRecommendations(answers){
 }
 
 
+// ----------- Summary Rendering --------------
+function mapOptionLabel(questionId, value){
+  const q = config.questions.find(q => q.id === questionId);
+  if (!q) return value;
+  if (q.type === 'single' || q.type === 'multi') {
+    const opt = q.options.find(o => o.value === value);
+    return opt ? opt.label : value;
+  }
+  return value;
+}
+
+function mapMatrixLabel(rowId, value){
+  const q = config.questions.find(q => q.id === 'materials');
+  if (!q) return value;
+  const col = q.cols.find(c => c.value === value);
+  return col ? col.label : value;
+}
+
+function renderSummary(answers){
+  summaryEl.innerHTML = '';
+  resultsEl.innerHTML = '';
+
+  const card = document.createElement('div');
+  card.className = 'summary-card';
+
+  const h = document.createElement('h3');
+  h.textContent = 'Review your responses';
+  card.appendChild(h);
+
+  config.questions.forEach(q => {
+    const group = document.createElement('div');
+    group.className = 'summary-group';
+
+    const title = document.createElement('strong');
+    title.textContent = q.legend;
+    group.appendChild(title);
+
+    let content = '';
+
+    if (q.type === 'single') {
+      const val = answers[q.id];
+      content = val ? mapOptionLabel(q.id, val) : 'No selection';
+    } else if (q.type === 'multi') {
+      const vals = answers[q.id] || [];
+      if (vals.length === 0) {
+        content = 'No selections';
+      } else {
+        content = vals.map(v => mapOptionLabel(q.id, v)).join(', ');
+      }
+    } else if (q.type === 'matrix') {
+      const vals = answers[q.id] || {};
+      const lines = q.rows.map(r => {
+        const v = vals[r.id];
+        if (!v) return `${r.label}: (no response)`;
+        return `${r.label}: ${mapMatrixLabel(r.id, v)}`;
+      });
+      content = lines.join(' • ');
+    }
+
+    const p = document.createElement('span');
+    p.textContent = content;
+    group.appendChild(p);
+
+    card.appendChild(group);
+  });
+
+  const footer = document.createElement('div');
+  footer.className = 'summary-footer';
+
+  const confirmBtn = document.createElement('button');
+  confirmBtn.type = 'button';
+  confirmBtn.className = 'primary';
+  confirmBtn.textContent = 'See My Personalized Links';
+
+  const editBtn = document.createElement('button');
+  editBtn.type = 'button';
+  editBtn.textContent = 'Go Back and Edit';
+
+  footer.appendChild(confirmBtn);
+  footer.appendChild(editBtn);
+  card.appendChild(footer);
+
+  summaryEl.appendChild(card);
+
+  confirmBtn.addEventListener('click', () => {
+    const groups = buildRecommendations(answers);
+    renderResults(groups, answers);
+    window.scrollTo({ top: summaryEl.offsetTop, behavior: 'smooth' });
+  });
+
+  editBtn.addEventListener('click', () => {
+    summaryEl.innerHTML = '';
+    window.scrollTo({ top: formEl.offsetTop, behavior: 'smooth' });
+  });
+}
+
+
 // ----------- Render Results --------------
 function renderResults(groups, answers){
   resultsEl.innerHTML='';
@@ -453,7 +842,7 @@ function renderResults(groups, answers){
   if(Object.keys(groups).length===0){
     const p=document.createElement('p');
     p.className='muted';
-    p.textContent='No recommendations yet.';
+    p.textContent='No recommendations yet. Try answering a few more questions above.';
     resultsEl.appendChild(p);
     return;
   }
@@ -481,16 +870,24 @@ function renderResults(groups, answers){
 
 
 // ----------- Buttons --------------
-document.getElementById('submitBtn').addEventListener('click', (e)=>{
-  e.preventDefault();
+document.getElementById('submitBtn').addEventListener('click', ()=>{
   const ans=getAnswers();
-  const groups=buildRecommendations(ans);
-  renderResults(groups, ans);
+  const { completed } = computeProgress(ans);
+
+  if (completed === 0) {
+    alert('Please answer at least one question before reviewing your responses.');
+    return;
+  }
+
+  renderSummary(ans);
+  window.scrollTo({ top: summaryEl.offsetTop, behavior: 'smooth' });
 });
 
 document.getElementById('resetBtn').addEventListener('click', ()=>{
   formEl.reset();
   resultsEl.innerHTML='';
+  summaryEl.innerHTML='';
+  updateProgress();
 });
 
 document.getElementById('copyBtn').addEventListener('click', ()=>{
@@ -520,6 +917,9 @@ document.getElementById('downloadBtn').addEventListener('click', ()=>{
   a.href=url; a.download='links.csv'; a.click();
   URL.revokeObjectURL(url);
 });
+
+// Initialize progress once
+updateProgress();
 </script>
 </body>
 </html>
